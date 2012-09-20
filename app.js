@@ -2,19 +2,7 @@ $(function() {
     var ref_tmpl = '<li><a tabindex="-1" href="#">%1</a></li>';
 
     var gh = require('github-wrapper');
-
-    var repo = new gh.Repo('ajaxorg', 'node-github');
-    repo.getRefs(function(err, refs) {
-        var html = refs.map(function(ref) {
-            return ref.ref.replace(/^refs\//, '');
-
-        }).map(function(ref) {
-            return ref_tmpl.replace('%1', ref);
-
-        }).join('\n');
-
-        $('ul.references').append(html);
-    });
+    var repo = null;
 
     var editor = CodeMirror.fromTextArea(
         document.getElementById('srcviewer'),
@@ -43,14 +31,44 @@ $(function() {
 
 
     $('ul.references').on('click', 'li:not(.nav-header)', function() {
-        repo.getFileHierachy($(this).text(), function(err, data) {
+        repo && repo.getFileHierachy($(this).text(), function(err, data) {
             updateFileTree(data);
         });
     });
 
     $('ul.filetree').on('click', 'li.git-blob', function() {
-        repo.getBlob($(this).data("sha"), function(err, code) {
+        repo && repo.getBlob($(this).data("sha"), function(err, code) {
             editor.setValue( new Buffer(code, 'base64').toString('utf8') );
         });
+    });
+
+    function loadRepo(user, name, done) {
+        repo = new gh.Repo(user, name);
+        repo.getRefs(function(err, refs) {
+            var html = refs.map(function(ref) {
+                return ref.ref.replace(/^refs\//, '');
+
+            }).map(function(ref) {
+                return ref_tmpl.replace('%1', ref);
+
+            }).join('\n');
+
+            $('ul.references').html(html);
+            done();
+        });
+    }
+
+
+    $('#load-repo').on('click', function() {
+        var user = $('#repo-user').val(), name = $('#repo-name').val();
+        console.log(user, name);
+        loadRepo(user, name, function() {
+            $('#modal-choose-repo').modal('hide');
+        });
+    });
+
+    $('#modal-choose-repo').modal({
+        keyboard: false,
+        show: true
     });
 });

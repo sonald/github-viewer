@@ -1,15 +1,23 @@
 .references {
     height: 50vh;
     overflow: auto;
-    /*margin: 10px 20px;*/
+ }
+
+.row-fluid .viewer {
+    height: 90vh;
+    height: -webkit-calc(100% - 62px);
+    height: calc(100% - 62px);
 }
 
 .filetree {
     list-style-type: none;
+    height: 100%;
+    overflow: auto;
+    margin-right: 10px;
 }
 
 .filetree li {
-    padding: 6px 40px;
+    padding: 6px 20px;
     border: 1px solid gray;
 }
 
@@ -23,11 +31,6 @@
     border-bottom-right-radius: 10px;
 }
 
-
-.viwer {
-    height: 90vh;
-}
-
 .CodeMirror-scroll {
-    height: 80vh;
+    height: 100%;
 }
