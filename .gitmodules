@@ -1,3 +1,6 @@
 [submodule "lib/CodeMirror"]
 	path = lib/CodeMirror
 	url = https://github.com/marijnh/CodeMirror.git
+[submodule "lib/Notifier"]
+	path = lib/Notifier
+	url = https://github.com/rlemon/Notifier.js.git
