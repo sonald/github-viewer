@@ -16,7 +16,7 @@ $(function() {
         });
 
     function updateBranchCommits(commits) {
-        var commit_tmpl = '<li data-sha="%3"><a><span>%1 &nbsp;</span><span>%2</span></a></li>';
+        var commit_tmpl = '<li data-sha="%3"><a><span class="text-warning">[%1] &nbsp;</span><span class="text-success">%2</span></a></li>';
         var html = '';
         commits.forEach(function(commit) {
             html += commit_tmpl.replace('%1', commit.sha.substr(0, 6))
@@ -50,6 +50,7 @@ $(function() {
         });
     });
 
+
     $('ul.references').on('click', 'li:not(.nav-header)', function() {
         repo && repo.getBranchCommits($(this).text(), function(err, commits) {
             if (!err) {
@@ -64,6 +65,13 @@ $(function() {
         });
     });
 
+    $('#commit-files').on('click', 'li.git-tree', function() {
+        repo && repo.getTree($(this).data('sha'), function(err, data) {
+            if (!err) {
+                updateFileTree(data);
+            }
+        });
+    });
 
     function loadRepo(user, name, done) {
         repo = new gh.Repo(user, name);
@@ -96,9 +104,12 @@ $(function() {
         $repo_select.modal('toggle');
     });
 
-    $repo_select.modal({
-        keyboard: false,
-        show: true
+    webkitRequestAnimationFrame(function() {
+        $repo_select.modal({
+            keyboard: true,
+            show: true,
+            focus: true
+        });
     });
 
 });

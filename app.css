@@ -11,6 +11,10 @@
     overflow-y: auto;
  }
 
+.fluid-container {
+    padding-left: 6px;
+}
+
 .row-fluid .accordion {
     height: 90vh;
     height: -webkit-calc(100% - 82px);
@@ -41,13 +45,18 @@
 }
 
 .tree li {
-    /*padding: 0 5px 0 10px;*/
     cursor: hand;
+    width: 100%;
+}
+
+.tree li:hover {
+    text-decoration: underline;
 }
 
 .tree li:first-child {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+    padding-top: 6px;
 }
 
 .tree li:last-child {

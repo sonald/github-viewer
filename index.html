@@ -44,37 +44,36 @@
             </div>
         </div>
 
+        <!-- head bar menus -->
+        <div class="navbar navbar-inverse">
+            <div class="navbar-inner">
+                <a class="brand" href="#"> Github Viewer </a>
+
+                <ul class="nav">
+                    <li class="dropdown">
+                        <a id="refs_menu" data-toggle="dropdown" href="#">
+                            Refs <b class='caret'></b>
+                        </a>
+
+                        <ul class="references dropdown-menu" role="menu" aria-labelledby="refs_menu">
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a id="settings_menu" data-toggle="dropdown" href="#">
+                            Settings <b class='caret'></b>
+                        </a>
+
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="settings_menu">
+                            <li id="menu_change_repo"><a tabindex="-1" href="#">change repo</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <!-- main area -->
         <div class="fluid-container">
-            <!-- head bar menus -->
-            <div class="navbar navbar-inverse">
-                <div class="navbar-inner">
-                    <a class="brand" href="#"> Editor </a>
-
-                    <ul class="nav">
-                        <li class="dropdown">
-                            <a id="refs_menu" data-toggle="dropdown" href="#">
-                                Refs <b class='caret'></b>
-                            </a>
-
-                            <ul class="references dropdown-menu" role="menu" aria-labelledby="refs_menu">
-                            </ul>
-                        </li>
-
-                        <li class="dropdown">
-                            <a id="settings_menu" data-toggle="dropdown" href="#">
-                                Settings <b class='caret'></b>
-                            </a>
-
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="settings_menu">
-                                <li id="menu_change_repo"><a tabindex="-1" href="#">change repo</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-
             <div class="row-fluid">
                 <div class="span3 accordion">
 
@@ -88,7 +87,8 @@
                         <div id="accordion-commits" class="accordion-body collapse in">
                             <div class="accordion-inner">
                                 <ul class="tree" id="branch-commits">
-
+                                    <li><a><span class="text-warning">[16e2ab] &nbsp;</span>
+                                        <span class="text-success">test msg</span></a></li>
                                 </ul>
                             </div>
                         </div>
