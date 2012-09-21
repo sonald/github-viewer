@@ -6,6 +6,10 @@ $(function() {
 
     var $repo_select = $('#modal-choose-repo');
 
+    var blob_tmpl = '<li class="git-blob" data-sha="%2"><i class="icon-file"></i><a>%1</a></li>';
+    var tree_tmpl = '<li class="git-tree" data-sha="%2"><i class="icon-folder-close"></i><a>%1</a></li>';
+    var commit_tmpl = '<li data-sha="%3"><a><span class="text-warning">[%1] &nbsp;</span><span class="text-success">%2</span></a></li>';
+
     var editor = CodeMirror.fromTextArea(
         document.getElementById('srcviewer'),
         {
@@ -16,7 +20,6 @@ $(function() {
         });
 
     function updateBranchCommits(commits) {
-        var commit_tmpl = '<li data-sha="%3"><a><span class="text-warning">[%1] &nbsp;</span><span class="text-success">%2</span></a></li>';
         var html = '';
         commits.forEach(function(commit) {
             html += commit_tmpl.replace('%1', commit.sha.substr(0, 6))
@@ -26,10 +29,14 @@ $(function() {
         $('#branch-commits').html(html);
     }
 
-    function updateFileTree(treeobj) {
-        var blob_tmpl = '<li class="git-blob" data-sha="%2"><i class="icon-file"></i><a>%1</a></li>';
-        var tree_tmpl = '<li class="git-tree" data-sha="%2"><i class="icon-folder-close"></i><a>%1</a></li>';
+    function appendBranchCommit(commit) {
+        var html = commit_tmpl.replace('%1', commit.sha.substr(0, 6))
+            .replace('%2', commit.message).replace('%3', commit.sha);
 
+        $('#branch-commits').append(html);
+    }
+
+    function updateFileTree(treeobj) {
         var html = '';
         treeobj.tree.forEach(function(obj) {
             if (obj.type === 'blob') {
@@ -52,11 +59,22 @@ $(function() {
 
 
     $('ul.references').on('click', 'li:not(.nav-header)', function() {
-        repo && repo.getBranchCommits($(this).text(), function(err, commits) {
-            if (!err) {
-                updateBranchCommits(commits);
-            }
+        if (!repo)
+            return;
+
+        $('#branch-commits').empty();
+        repo.off('branch.commit');
+        repo.off('branch.end');
+
+        repo.on('branch.commit', function(commit) {
+            appendBranchCommit(commit);
         });
+
+        repo.on('branch.end', function() {
+            repo.off('branch.commit');
+        });
+
+        repo.getBranchCommits($(this).text());
     });
 
     $('#commit-files').on('click', 'li.git-blob', function() {
@@ -74,6 +92,10 @@ $(function() {
     });
 
     function loadRepo(user, name, done) {
+        // clear repo
+        $('#branch-commits').empty();
+        $('#commit-files').empty();
+
         repo = new gh.Repo(user, name);
         repo.getRefs(function(err, refs) {
             var html = refs.map(function(ref) {
