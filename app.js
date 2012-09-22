@@ -1,7 +1,7 @@
 $(function() {
     var ref_tmpl = '<li><a tabindex="-1" href="#">%1</a></li>';
 
-    var gh = require('github-wrapper');
+    var gh = require('github-proxy');
     var repo = null;
 
     var $repo_select = $('#modal-choose-repo');
@@ -18,16 +18,6 @@ $(function() {
             lineWrapping: true,
             lineNumbers: true
         });
-
-    function updateBranchCommits(commits) {
-        var html = '';
-        commits.forEach(function(commit) {
-            html += commit_tmpl.replace('%1', commit.sha.substr(0, 6))
-                .replace('%2', commit.message).replace('%3', commit.sha);
-        });
-
-        $('#branch-commits').html(html);
-    }
 
     function appendBranchCommit(commit) {
         var html = commit_tmpl.replace('%1', commit.sha.substr(0, 6))
@@ -50,10 +40,12 @@ $(function() {
     }
 
     $('#branch-commits').on('click', 'li', function() {
-        repo && repo.getFileHierachy($(this).data('sha'), function(err, data) {
-            if (!err) {
-                updateFileTree(data);
-            }
+        repo.getCommit($(this).data('sha'), function(err, commit) {
+            repo.getSnapshot(commit, function(err, data) {
+                if (!err) {
+                    updateFileTree(data);
+                }
+            });
         });
     });
 
@@ -62,24 +54,27 @@ $(function() {
         if (!repo)
             return;
 
-        $('#branch-commits').empty();
-        repo.off('branch.commit');
-        repo.off('branch.end');
+        repo.changeBranch($(this).text(), function(err) {
+            if (err) {
+                console.log(err);
+                return;
+            }
 
-        repo.on('branch.commit', function(commit) {
-            appendBranchCommit(commit);
+            $('#branch-commits').empty();
+            var stream = repo.createCommitStream();
+            stream.on('data', function(commit) {
+                // console.log(commit);
+                appendBranchCommit(commit);
+            });
+            stream.on('end', function(commit) {
+                console.log('commits end');
+            });
         });
-
-        repo.on('branch.end', function() {
-            repo.off('branch.commit');
-        });
-
-        repo.getBranchCommits($(this).text());
     });
 
     $('#commit-files').on('click', 'li.git-blob', function() {
         repo && repo.getBlob($(this).data("sha"), function(err, code) {
-            editor.setValue( new Buffer(code, 'base64').toString('utf8') );
+            editor.setValue( new Buffer(code.content, 'base64').toString('utf8') );
         });
     });
 
@@ -97,7 +92,7 @@ $(function() {
         $('#commit-files').empty();
 
         repo = new gh.Repo(user, name);
-        repo.getRefs(function(err, refs) {
+        repo.showRefs(function(err, refs) {
             var html = refs.map(function(ref) {
                 return ref.ref.replace(/^refs\//, '');
 
