@@ -47,10 +47,14 @@
 .tree li {
     cursor: hand;
     width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .tree li:hover {
     text-decoration: underline;
+    text-overflow: inherit;
 }
 
 .tree li:first-child {

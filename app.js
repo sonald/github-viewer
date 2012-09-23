@@ -8,7 +8,7 @@ $(function() {
 
     var blob_tmpl = '<li class="git-blob" data-sha="%2"><i class="icon-file"></i><a>%1</a></li>';
     var tree_tmpl = '<li class="git-tree" data-sha="%2"><i class="icon-folder-close"></i><a>%1</a></li>';
-    var commit_tmpl = '<li data-sha="%3"><a><span class="text-warning">[%1] &nbsp;</span><span class="text-success">%2</span></a></li>';
+    var commit_tmpl = '<li data-sha="%3"><a rel="tooltip" title="%2"><span class="text-warning">[%1] &nbsp;</span><span class="text-success">%2</span></a></li>';
 
     var editor = CodeMirror.fromTextArea(
         document.getElementById('srcviewer'),
@@ -21,7 +21,7 @@ $(function() {
 
     function appendBranchCommit(commit) {
         var html = commit_tmpl.replace('%1', commit.sha.substr(0, 6))
-            .replace('%2', commit.message).replace('%3', commit.sha);
+            .replace(/%2/g, commit.message).replace('%3', commit.sha);
 
         $('#branch-commits').append(html);
     }
