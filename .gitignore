@@ -1,3 +1,6 @@
 *~
 .*~
 *.sublime-*
+*.swp
+node_modules/*
+!node_modules/github*.js

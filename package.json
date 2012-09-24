@@ -1,10 +1,21 @@
 {
     "name": "github-viewer",
     "main": "index.html",
+    "version": "0.1.0",
     "window": {
         "toolbar": false,
         "width": 800,
         "height": 600,
         "icon": ""
+    },
+    "dependencies": {
+    },
+
+    "devDependencies": {
+        "mocha": "1.5.x"
+    },
+
+    "scripts": {
+        "test": "./node_modules/mocha/bin/mocha -t 600000 -R spec test/gh-proxy-test.js"
     }
 }
