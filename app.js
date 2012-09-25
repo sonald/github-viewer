@@ -3,7 +3,7 @@ $(function() {
 
     var gh = require('github-proxy');
     var repo = null;
-
+    var activeStreams = [];
     var $repo_select = $('#modal-choose-repo');
 
     var blob_tmpl = '<li class="git-blob" data-sha="%2"><i class="icon-file"></i><a>%1</a></li>';
@@ -49,7 +49,6 @@ $(function() {
         });
     });
 
-
     $('ul.references').on('click', 'li:not(.nav-header)', function() {
         if (!repo)
             return;
@@ -60,26 +59,34 @@ $(function() {
                 return;
             }
 
+            if (activeStreams) {
+                var old_stream;
+                while((old_stream = activeStreams.shift())) {
+                    old_stream.pause();
+                    old_stream.destroy();
+                }
+            }
+
             $('#branch-commits').empty();
             var stream = repo.createCommitStream();
+            activeStreams.push(stream);
             stream.on('data', function(commit) {
-                // console.log(commit);
                 appendBranchCommit(commit);
             });
-            stream.on('end', function(commit) {
+            stream.on('end', function() {
                 console.log('commits end');
             });
         });
     });
 
     $('#commit-files').on('click', 'li.git-blob', function() {
-        repo && repo.getBlob($(this).data("sha"), function(err, code) {
+        repo.getBlob($(this).data("sha"), function(err, code) {
             editor.setValue( new Buffer(code.content, 'base64').toString('utf8') );
         });
     });
 
     $('#commit-files').on('click', 'li.git-tree', function() {
-        repo && repo.getTree($(this).data('sha'), function(err, data) {
+        repo.getTree($(this).data('sha'), function(err, data) {
             if (!err) {
                 updateFileTree(data);
             }
@@ -87,12 +94,27 @@ $(function() {
     });
 
     function loadRepo(user, name, done) {
+        if (repo) {
+            if (activeStreams) {
+                var stream;
+                while((stream = activeStreams.shift())) {
+                    stream.pause();
+                    stream.destroy();
+                }
+            }
+            repo.released = true;
+            repo = null;
+        }
+
         // clear repo
         $('#branch-commits').empty();
         $('#commit-files').empty();
 
         repo = new gh.Repo(user, name);
-        repo.showRefs(function(err, refs) {
+        var loc = 'https://github.com/' + user + '/' + name;
+        $('#repo_link').attr('href', loc).text(loc);
+
+        repo.showRefs('heads', function(err, refs) {
             var html = refs.map(function(ref) {
                 return ref.ref.replace(/^refs\//, '');
 
