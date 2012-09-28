@@ -13,11 +13,11 @@ $(function() {
     var editor = CodeMirror.fromTextArea(
         document.getElementById('srcviewer'),
         {
-            mode: 'javascript',
             theme: 'elegant',
             lineWrapping: true,
             lineNumbers: true
         });
+    CodeMirror.modeURL = 'lib/CodeMirror/mode/%N/%N.js';
 
     function appendBranchCommit(commit) {
         var html = commit_tmpl.replace('%1', commit.sha.substr(0, 6))
@@ -79,9 +79,37 @@ $(function() {
         });
     });
 
+    var mode_name_map = [
+        [/js$/, "javascript"],
+        [/less$/, 'less'],
+        [/css$/, 'css'],
+        [/coffee$/, 'coffescript'],
+        [/(htm|xml|xhtml)$/, 'htmlmixed'],
+        [/md$/, 'markdown'],
+        [/(sh|Makefile)$/, 'shell'],
+        [/(c|cxx|cpp|h|hxx)$/, 'javascript'], // no c right now
+        [/.*/, 'javascript']
+    ];
+
+    function loadMode(filename) {
+        var mode = filename || "";
+        for (var i = 0; i < mode_name_map.length; i++) {
+            var rule = mode_name_map[i];
+            if (rule[0].test(filename)) {
+                mode = rule[1];
+                break;
+            }
+        }
+       editor.setOption("mode", mode);
+       CodeMirror.autoLoadMode(editor, mode);
+   }
+
     $('#commit-files').on('click', 'li.git-blob', function() {
-        repo.getBlob($(this).data("sha"), function(err, code) {
+        var $this = $(this);
+
+        repo.getBlob($this.data("sha"), function(err, code) {
             editor.setValue( new Buffer(code.content, 'base64').toString('utf8') );
+            loadMode($this.text());
         });
     });
 

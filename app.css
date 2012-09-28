@@ -1,14 +1,6 @@
-.fixed-ontop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9999;
-}
-
 .references {
     max-height: 50vh;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: auto;
  }
 
 .fluid-container {
@@ -16,8 +8,6 @@
 }
 
 .row-fluid .accordion {
-    /*height: 90vh;
-    height: -webkit-calc(100% - 82px);*/
     margin-bottom: 0; /* override bs */
 }
 
@@ -26,7 +16,7 @@
 }
 
 .row-fluid .accordion .accordion-group {
-    overflow-x: auto;
+    overflow: auto;
     max-height: 44vh;
     height: -webkit-calc((100% - 82px)/2);
 }
@@ -38,8 +28,6 @@
 
 .tree {
     list-style-type: none;
-    /*height: 100%;*/
-    /*overflow: auto;*/
     padding-right: 10px;
 }
 
