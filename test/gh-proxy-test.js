@@ -194,7 +194,7 @@ describe('github proxy', function() {
             });
         });
 
-        it.only('collect commits from master and destroy at mid', function(done) {
+        it('collect commits from master and destroy at mid', function(done) {
             var nr_commits = 0;
 
             repo.changeBranch('master', function(err) {
@@ -213,6 +213,42 @@ describe('github proxy', function() {
                     done();
                 });
             });
+        });
+
+        it.only('collect commits from master twice by parallel', function(done) {
+            var activeStreams = [];
+            var round = 0;
+
+            function hitBranch() {
+                repo.changeBranch('master', function(err) {
+                    if (activeStreams) {
+                        var old_stream;
+                        while((old_stream = activeStreams.shift())) {
+                            console.log('destroy old stream');
+                            old_stream.pause();
+                            old_stream.destroy();
+                        }
+                    }
+
+                    var stream = repo.createCommitStream();
+                    activeStreams.push(stream);
+                    stream.on('data', function(commit) {
+                        console.log('[%s] - %s', commit.sha.slice(0,6), commit.author.date);
+                    });
+                    stream.on('end', function() {
+                        console.log('commits end');
+                        round++;
+                        if (round >= 2) {
+                            done();
+                        }
+                    });
+                });
+            }
+
+            hitBranch();
+            setTimeout(function() {
+                hitBranch();
+            }, 8000);
         });
     });
 });
