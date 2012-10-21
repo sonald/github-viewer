@@ -14,19 +14,47 @@ $(function() {
     function updateTags(code) {
         var jstag = require('jstag');
         var fs = require('fs');
-        var tags = jstag.parse(code);
         var $root = $('#file-tags');
 
         function makeTag(obj) {
-            $root.append( tag_tmpl.replace('%1', obj.ctx).replace('%2', JSON.stringify(obj)) );
+            var $o = $(tag_tmpl.replace(/%1/g, obj.ctx));
+            $o.data('tagobj', obj);
+            $root.append($o);
         }
 
-        $root.empty();
-        tags.functions().forEach(makeTag);
-        tags.definitions().forEach(makeTag);
+        updateTags = function(code) {
+            var tags = jstag.parse(code);
+            $root.empty();
+            tags.functions().forEach(makeTag);
+            tags.definitions().forEach(makeTag);
+        };
+
+        updateTags(code);
     }
 
-    var editor = CodeMirror.fromTextArea(
+    $('#file-tags').on('click', 'li', function() {
+        var tag = $(this).data('tagobj');
+        if (tag.name) { // valid tag obj
+            console.log(tag);
+            // editor.setCursor(tag.loc.start.line, tag.loc.start.column);
+            var start = {
+                    line: tag.loc.start.line-1,
+                    ch: tag.loc.start.column
+                },
+                end = {
+                    line: tag.loc.end.line-1,
+                    ch: tag.loc.end.column
+                };
+
+            var coords = editor.charCoords(start, 'local');
+            var info = editor.getScrollInfo();
+            editor.scrollTo(coords.x, coords.y-info.width/2);
+            editor.setSelection(start, end);
+        }
+
+    });
+
+    window.editor = CodeMirror.fromTextArea(
         document.getElementById('srcviewer'),
         {
             theme: 'elegant',
@@ -121,6 +149,7 @@ $(function() {
             }
         }
         editor.setOption("mode", mode);
+        editor.filename = filename;
         CodeMirror.autoLoadMode(editor, mode);
     }
 
