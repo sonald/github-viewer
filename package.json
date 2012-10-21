@@ -9,6 +9,7 @@
         "icon": ""
     },
     "dependencies": {
+        "jstag": "git://github.com/sonald/jstag.git#master"
     },
 
     "devDependencies": {

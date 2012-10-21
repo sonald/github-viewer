@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
     <head>
 
@@ -113,6 +114,23 @@
                         </div>
                     </div>
 
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" href="#accordion-tags">
+                                Definitions
+                            </a>
+                        </div>
+
+                        <div id="accordion-tags" class="accordion-body collapse in">
+                            <div class="accordion-inner">
+                                <!-- tag list -->
+                                <ul class="tree" id="file-tags">
+                                    <li><i class="icon-tag"></i>Function</li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
 
@@ -120,7 +138,34 @@
                     <textarea id="srcviewer"></textarea>
                 </div>
             </div>
-
         </div>
+        
+        <script type="template/html" id="blob_tmpl">
+          <li class="git-blob" data-sha="%2">
+            <i class="icon-file"></i><a href="#">%1</a>
+          </li>
+        </script>
+
+        <script type="template/html" id="tree_tmpl">
+          <li class="git-tree" data-sha="%2">
+            <i class="icon-folder-close"></i><a href="#">%1</a>
+          </li>
+        </script>
+        
+        <script type="template/html" id="commit_tmpl">
+          <li data-sha="%3">
+            <a rel="tooltip" title="%2" href="#">
+              <span class="text-warning">[%1] &nbsp;</span>
+              <span class="text-success">%2</span>
+            </a>
+          </li>
+        </script>
+    
+        <script type="template/html" id="tag_tmpl">
+          <li data-tagobj="%2">
+            <i class="icon-tag"></i><a href="#">%1</a>
+          </li>
+        </script>
+        
     </body>
 </html>

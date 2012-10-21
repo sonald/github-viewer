@@ -6,16 +6,36 @@ $(function() {
     var activeStreams = [];
     var $repo_select = $('#modal-choose-repo');
 
-    var blob_tmpl = '<li class="git-blob" data-sha="%2"><i class="icon-file"></i><a>%1</a></li>';
-    var tree_tmpl = '<li class="git-tree" data-sha="%2"><i class="icon-folder-close"></i><a>%1</a></li>';
-    var commit_tmpl = '<li data-sha="%3"><a rel="tooltip" title="%2"><span class="text-warning">[%1] &nbsp;</span><span class="text-success">%2</span></a></li>';
+    var blob_tmpl = $('#blob_tmpl').text();
+    var tree_tmpl = $('#tree_tmpl').text();
+    var commit_tmpl = $('#commit_tmpl').text();
+    var tag_tmpl = $('#tag_tmpl').text();
+
+    function updateTags(code) {
+        var jstag = require('jstag');
+        var fs = require('fs');
+        var tags = jstag.parse(code);
+        var $root = $('#file-tags');
+
+        function makeTag(obj) {
+            $root.append( tag_tmpl.replace('%1', obj.ctx).replace('%2', JSON.stringify(obj)) );
+        }
+
+        $root.empty();
+        tags.functions().forEach(makeTag);
+        tags.definitions().forEach(makeTag);
+    }
 
     var editor = CodeMirror.fromTextArea(
         document.getElementById('srcviewer'),
         {
             theme: 'elegant',
             lineWrapping: true,
-            lineNumbers: true
+            lineNumbers: true,
+            onChange: function() {
+                console.log('content updated');
+                updateTags(editor.getValue());
+            }
         });
     CodeMirror.modeURL = 'lib/CodeMirror/mode/%N/%N.js';
 
@@ -100,9 +120,9 @@ $(function() {
                 break;
             }
         }
-       editor.setOption("mode", mode);
-       CodeMirror.autoLoadMode(editor, mode);
-   }
+        editor.setOption("mode", mode);
+        CodeMirror.autoLoadMode(editor, mode);
+    }
 
     $('#commit-files').on('click', 'li.git-blob', function() {
         var $this = $(this);
@@ -140,7 +160,7 @@ $(function() {
 
         repo = new gh.Repo(user, name);
         var loc = 'https://github.com/' + user + '/' + name;
-        $('#repo_link').attr('href', loc).text(loc);
+        $('#repo_link').text(loc);
 
         repo.showRefs('heads', function(err, refs) {
             var html = refs.map(function(ref) {
