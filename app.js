@@ -61,8 +61,10 @@ $(function() {
             lineWrapping: true,
             lineNumbers: true,
             onChange: function() {
-                console.log('content updated');
-                updateTags(editor.getValue());
+                if (editor.filename && /\.js$/.test(editor.filename)) {
+                    console.log('update js tags');
+                    updateTags(editor.getValue());
+                }
             }
         });
     CodeMirror.modeURL = 'lib/CodeMirror/mode/%N/%N.js';
@@ -157,8 +159,8 @@ $(function() {
         var $this = $(this);
 
         repo.getBlob($this.data("sha"), function(err, code) {
+            loadMode($this.text().trim());
             editor.setValue( new Buffer(code.content, 'base64').toString('utf8') );
-            loadMode($this.text());
         });
     });
 
