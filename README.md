@@ -8,7 +8,8 @@ and present. and finally [node-github][] for interfacing with github repos.
 
 right now, if you want to run and test it, go to [node-webkit][] and download 
 binary release for your system ( I use ubuntu x86-64 version ), then run 
-`nw .` inside project root.
+`nw .` inside project root. because I use menu, window and tray api, so at least 
+nw >= 0.3.2 needed.
 
 for tags support, I wrote a small lib for it which I badly named [jstag][].
 

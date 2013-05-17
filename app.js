@@ -1,3 +1,19 @@
+var gui = require('nw.gui');
+var menubar = new gui.Menu({type: 'menubar'});
+
+var fileItems =  new gui.Menu();
+fileItems.append(new gui.MenuItem({
+    label: 'Quit', icon: 'logo.png', click: function() { gui.App.quit(); }
+}));
+
+var fileMenu = new gui.MenuItem({
+    label: 'File', submenu: fileItems
+});
+
+menubar.append(fileMenu);
+gui.Window.get().menu = menubar;
+
+
 $(function() {
     var ref_tmpl = '<li><a tabindex="-1" href="#">%1</a></li>';
 
@@ -36,7 +52,6 @@ $(function() {
         var tag = $(this).data('tagobj');
         if (tag.name) { // valid tag obj
             console.log(tag);
-            // editor.setCursor(tag.loc.start.line, tag.loc.start.column);
             var start = {
                     line: tag.loc.start.line-1,
                     ch: tag.loc.start.column

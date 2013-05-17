@@ -4,3 +4,5 @@
 *.swp
 node_modules/*
 !node_modules/github*.js
+.zcache
+.sass-cache

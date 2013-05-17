@@ -1,0 +1,118 @@
+html, body {
+    height: 100%;
+}
+
+.navbar {
+    -webkit-app-region: drag;
+    -webkit-user-select: none;
+
+    a {
+        -webkit-app-region: no-drag;
+    }
+}
+
+.references {
+    max-height: 50vh;
+    overflow: auto;
+ }
+
+.mycontainer {
+    padding-left: 6px;
+    height: -webkit-calc(100% - 71px);
+    /* overflow: hidden; */
+}
+
+.mycontainer > div {
+    height: 100%;
+}
+
+.row-fluid {
+    .sidebar {
+        height: 100%;
+        overflow: auto;
+    }
+
+    .accordion {
+        margin-bottom: 0; /* override bs */
+        max-width: 250px;
+    }
+
+    .accordion .accordion-inner {
+        padding: 0;
+    }
+
+    .accordion .accordion-group:first-child {
+        overflow: auto;
+        max-height: 20vh;
+    }
+
+    .accordion .accordion-group {
+        overflow: auto;
+        max-height: 40vh;
+    }
+
+    .viewer {
+        height: 100%;
+    }
+}
+
+.tree {
+    list-style-type: none;
+    padding-right: 10px;
+
+    li {
+        cursor: hand;
+        width: 100%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    li:hover {
+        text-decoration: underline;
+        text-overflow: inherit;
+    }
+
+    li:first-child {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        padding-top: 6px;
+    }
+
+    li:last-child {
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+}
+
+.CodeMirror {
+    border: 1px solid rgba(213, 171, 206, 0.6);
+    margin: 0 4px;
+    height: 100%;
+}
+
+.CodeMirror-scroll {
+    height: 100%;
+    overflow-y: auto;
+}
+
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track-piece {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 4px;
+    background: rgba(231, 75, 175, 0.46);
+    -webkit-box-shadow: 0 0 2px rgba(0,0,0,0);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    -webkit-border-radius: 4px;
+    background: rgba(231, 75, 175, 0.46);
+    -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.4);
+}
